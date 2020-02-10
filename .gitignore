@@ -1,0 +1,5 @@
+# Project exclude paths
+/lms_common/target/
+/lms_common_model/target/
+/lms_community/target/
+/lms_system/target/

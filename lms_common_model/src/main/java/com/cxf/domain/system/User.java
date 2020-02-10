@@ -1,0 +1,106 @@
+package com.cxf.domain.system;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
+@Entity
+@Table(name = "pe_user")
+@Getter
+@Setter
+@NoArgsConstructor
+public class User implements Serializable {
+    /**
+     * ID
+     */
+    @Id
+    private String id;
+    /**
+     * 手机号码
+     */
+    private String mobile;
+    /**
+     * 用户名称
+     */
+    private String username;
+    /**
+     * 密码
+     */
+    private String password;
+
+    /**
+     * 启用状态 0为禁用 1为启用
+     */
+    private Integer enableState;
+    /**
+     * 创建时间
+     */
+    private Date createTime;
+
+    private String communityId;
+
+    private String communityName;
+
+    /**
+     * 部门ID
+     */
+    private String departmentId;
+
+    /**
+     * 加入时间
+     */
+    private Date timeOfEntry;
+
+    /**
+     * 学号
+     */
+    private String studentId;
+    /**
+     * 系别
+     */
+    private String system;
+
+
+    private String departmentName;
+
+//    /**
+//     * level
+//     *     String
+//     *          saasAdmin：saas管理员具备所有权限
+//     *          coAdmin：企业管理（创建租户企业的时候添加）
+//     *          user：普通用户（需要分配角色）
+//     */
+//    private String level;
+
+//    //用户头像
+//    private String staffPhoto;
+
+
+//    public User(Object [] values) {
+//        //用户名	手机号	工号	聘用 形式	入职 时间	部门编码
+//        this.username = values[1].toString();
+//        this.mobile = values[2].toString();
+//        this.workNumber = new DecimalFormat("#").format(values[3]).toString();
+//        this.formOfEmployment =((Double) values[4]).intValue();
+//        this.timeOfEntry = (Date) values[5];
+//        this.departmentId = values[6].toString(); //部门编码 != 部门id
+//    }
+
+    /**
+     * JsonIgnore
+     * 忽略json转化
+     */
+    @JsonIgnore
+    @ManyToMany
+    @JoinTable(name = "pe_user_role", joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")}
+    )
+    private Set<Role> roles = new HashSet<Role>();
+}
