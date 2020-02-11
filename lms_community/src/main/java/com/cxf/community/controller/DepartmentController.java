@@ -26,7 +26,7 @@ public class DepartmentController extends BaseController {
     @RequestMapping(value = "/department", method = RequestMethod.POST)
     public Result save(@RequestBody Department department) {
         //默认组织编号为篮球社团,来自BaseController
-        department.setCommunityId(parseCommunityId());
+        department.setCommunityId(communityId);
         departmentService.save(department);
         return new Result(ResultCode.SUCCESS);
     }
@@ -34,8 +34,8 @@ public class DepartmentController extends BaseController {
     @RequestMapping(value = "/department", method = RequestMethod.GET)
     public Result findAll() {
         //默认组织编号为篮球社团,来自BaseController
-        Community community = communityService.findById(parseCommunityId());
-        List<Department> departmentList = departmentService.findAll(parseCommunityId());
+        Community community = communityService.findById(communityId);
+        List<Department> departmentList = departmentService.findAll(communityId);
         DeptListResult deptListResult = new DeptListResult(community, departmentList);
         return new Result(ResultCode.SUCCESS, deptListResult);
     }

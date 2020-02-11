@@ -70,14 +70,14 @@ public class User implements Serializable {
 
     private String departmentName;
 
-//    /**
-//     * level
-//     *     String
-//     *          saasAdmin：saas管理员具备所有权限
-//     *          coAdmin：企业管理（创建租户企业的时候添加）
-//     *          user：普通用户（需要分配角色）
-//     */
-//    private String level;
+    /**
+     * level
+     *     String
+     *          lmsAdmin：lms管理员具备所有权限
+     *          coAdmin：组织管理
+     *          user：普通用户（需要分配角色）
+     */
+    private String level;
 
 //    //用户头像
 //    private String staffPhoto;

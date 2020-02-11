@@ -5,6 +5,7 @@ import com.cxf.domain.system.Role;
 import com.cxf.domain.system.User;
 import com.cxf.system.dao.RoleDao;
 import com.cxf.system.dao.UserDao;
+import org.apache.shiro.crypto.hash.Md2Hash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -56,7 +57,8 @@ public class UserService {
         user.setId(id);
         //默认密码123456
         user.setCreateTime(new Date());
-        user.setPassword("123456");//设置默认登录密码
+        user.setPassword(new Md2Hash("123456", user.getMobile(), 3).toString());
+        user.setLevel("user");
         user.setEnableState(1);//状态
         return userDao.save(user);
     }

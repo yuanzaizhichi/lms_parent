@@ -3,6 +3,7 @@ package com.cxf.common.handler;
 import com.cxf.common.entity.Result;
 import com.cxf.common.entity.ResultCode;
 import com.cxf.common.exception.CommonException;
+import org.apache.shiro.authz.AuthorizationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -33,9 +34,10 @@ public class BaseExceptionHandler {
         }
     }
 
-//    @ExceptionHandler(value = AuthorizationException.class)
-//    @ResponseBody
-//    public Result error(HttpServletRequest request, HttpServletResponse response, AuthorizationException e) {
-//        return new Result(ResultCode.UNAUTHORISE);
-//    }
+    //接受shiro未授权异常
+    @ExceptionHandler(value = AuthorizationException.class)
+    @ResponseBody
+    public Result error(HttpServletRequest request, HttpServletResponse response, AuthorizationException e) {
+        return new Result(ResultCode.UNAUTHORISE);
+    }
 }

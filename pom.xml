@@ -51,11 +51,11 @@
             <artifactId>shiro-redis</artifactId>
             <version>3.0.0</version>
         </dependency>
-<!--        热部署-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-        </dependency>
+<!--        热部署:因shiro进行授权时bug，需关闭热部署-->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-devtools</artifactId>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -141,15 +141,15 @@
                 </configuration>
             </plugin>
 
-<!--            &lt;!&ndash;热部署配置&ndash;&gt;&ndash;&gt;-->
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <!--fork:如果没有该项配置,整个devtools不会起作用-->
-                    <fork>true</fork>
-                </configuration>
-            </plugin>
+<!--&lt;!&ndash;            &lt;!&ndash;热部署配置&ndash;&gt;&ndash;&gt;&ndash;&gt;-->
+<!--            <plugin>-->
+<!--                <groupId>org.springframework.boot</groupId>-->
+<!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
+<!--                <configuration>-->
+<!--                    &lt;!&ndash;fork:如果没有该项配置,整个devtools不会起作用&ndash;&gt;-->
+<!--                    <fork>true</fork>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 
