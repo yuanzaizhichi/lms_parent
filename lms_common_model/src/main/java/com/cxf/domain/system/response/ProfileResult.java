@@ -25,13 +25,13 @@ public class ProfileResult implements Serializable, AuthCachePrincipal {
         this.community = user.getCommunityName();
         this.communityId = user.getCommunityId();
 
-        Set<String> menus = new HashSet<>();
+        Set<Permission> menus = new HashSet<>();
         Set<String> points = new HashSet<>();
         Set<String> apis = new HashSet<>();
         for (Permission perm : list) {
             String code = perm.getCode();
             if (perm.getType() == 1) {
-                menus.add(code);
+                menus.add(perm);
             } else if (perm.getType() == 2) {
                 points.add(code);
             } else {
@@ -50,7 +50,7 @@ public class ProfileResult implements Serializable, AuthCachePrincipal {
         this.communityId = user.getCommunityId();
 
         Set<Role> roles = user.getRoles();
-        Set<String> menus = new HashSet<>();
+        Set<Permission> menus = new HashSet<>();
         Set<String> points = new HashSet<>();
         Set<String> apis = new HashSet<>();
         for (Role role : roles) {
@@ -58,7 +58,7 @@ public class ProfileResult implements Serializable, AuthCachePrincipal {
             for (Permission perm : perms) {
                 String code = perm.getCode();
                 if (perm.getType() == 1) {
-                    menus.add(code);
+                    menus.add(perm);
                 } else if (perm.getType() == 2) {
                     points.add(code);
                 } else {

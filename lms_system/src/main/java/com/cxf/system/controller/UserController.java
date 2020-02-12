@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
-@CrossOrigin
 @RestController
 @RequestMapping(value = "/sys")
 public class UserController extends BaseController {

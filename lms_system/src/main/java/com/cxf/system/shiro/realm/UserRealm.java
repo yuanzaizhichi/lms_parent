@@ -4,6 +4,7 @@ import com.cxf.common.shiro.realm.LmsRealm;
 import com.cxf.domain.system.Permission;
 import com.cxf.domain.system.User;
 import com.cxf.domain.system.response.ProfileResult;
+import com.cxf.system.dao.PermissionMenuDao;
 import com.cxf.system.service.PermissionService;
 import com.cxf.system.service.UserService;
 import org.apache.shiro.authc.*;
