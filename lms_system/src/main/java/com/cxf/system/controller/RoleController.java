@@ -36,8 +36,7 @@ public class RoleController extends BaseController {
     //添加角色
     @RequestMapping(value = "/role", method = RequestMethod.POST)
     public Result add(@RequestBody Role role) throws Exception {
-        String companyId = "1";
-        role.setCommunityId(companyId);
+        role.setCommunityId(communityId);
         roleService.save(role);
         return Result.SUCCESS();
     }
@@ -71,8 +70,7 @@ public class RoleController extends BaseController {
      */
     @RequestMapping(value = "/role", method = RequestMethod.GET)
     public Result findByPage(int page, int pagesize, Role role) throws Exception {
-        String companyId = "1";
-        Page<Role> searchPage = roleService.findByPage(companyId, page, pagesize);
+        Page<Role> searchPage = roleService.findByPage(communityId, page, pagesize);
         PageResult<Role> pr = new
                 PageResult(searchPage.getTotalElements(), searchPage.getContent());
         return new Result(ResultCode.SUCCESS, pr);
