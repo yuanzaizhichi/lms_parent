@@ -25,7 +25,7 @@ public class ProfileResult implements Serializable, AuthCachePrincipal {
         this.community = user.getCommunityName();
         this.communityId = user.getCommunityId();
 
-        Set<Permission> menus = new HashSet<>();
+        List<Permission> menus = new ArrayList<>();
         Set<String> points = new HashSet<>();
         Set<String> apis = new HashSet<>();
         for (Permission perm : list) {
@@ -50,7 +50,7 @@ public class ProfileResult implements Serializable, AuthCachePrincipal {
         this.communityId = user.getCommunityId();
 
         Set<Role> roles = user.getRoles();
-        Set<Permission> menus = new HashSet<>();
+        List<Permission> menus = new ArrayList<>();
         Set<String> points = new HashSet<>();
         Set<String> apis = new HashSet<>();
         for (Role role : roles) {

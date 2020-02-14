@@ -78,31 +78,31 @@ public class UserService {
     }
 
     public Page findAll(Map<String, Object> map, int page, int size) {
-//        Specification<User> specification = new Specification<User>() {
-//            @Override
-//            public Predicate toPredicate(Root<User> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-//                List<Predicate> list = new ArrayList<>();
-//                if (!StringUtils.isEmpty(map.get("companyId"))) {
-//                    list.add(criteriaBuilder.equal(root.get("companyId").as(String.class), map.get("companyId")));
-//                }
-//                if (!StringUtils.isEmpty(map.get("departmentId"))) {
-//                    list.add(criteriaBuilder.equal(root.get("departmentId").as(String.class), map.get("departmentId")));
-//                }
-//                if (!StringUtils.isEmpty(map.get("hasDept"))) {
-//                    if ("0".equals((String) map.get("hasDept"))) {
-//                        list.add(criteriaBuilder.isNull(root.get("departmentId")));
-//                    } else {
-//                        list.add(criteriaBuilder.isNotNull(root.get("departmentId")));
-//                    }
-//                }
-//                return criteriaBuilder.and(list.toArray(new Predicate[list.size()]));
-//            }
-//        };
-//
-//        Page<User> pageUser = userDao.findAll(specification, PageRequest.of(page - 1, size));
-//        return pageUser;
-        Page<User> pageUser = userDao.findAll(PageRequest.of(page - 1, size));
+        Specification<User> specification = new Specification<User>() {
+            @Override
+            public Predicate toPredicate(Root<User> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> list = new ArrayList<>();
+                if (!StringUtils.isEmpty(map.get("communityId"))) {
+                    list.add(criteriaBuilder.equal(root.get("communityId").as(String.class), map.get("communityId")));
+                }
+                if (!StringUtils.isEmpty(map.get("departmentId"))) {
+                    list.add(criteriaBuilder.equal(root.get("departmentId").as(String.class), map.get("departmentId")));
+                }
+                if (!StringUtils.isEmpty(map.get("hasDept"))) {
+                    if ("0".equals((String) map.get("hasDept"))) {
+                        list.add(criteriaBuilder.isNull(root.get("departmentId")));
+                    } else {
+                        list.add(criteriaBuilder.isNotNull(root.get("departmentId")));
+                    }
+                }
+                return criteriaBuilder.and(list.toArray(new Predicate[list.size()]));
+            }
+        };
+
+        Page<User> pageUser = userDao.findAll(specification, PageRequest.of(page - 1, size));
         return pageUser;
+//        Page<User> pageUser = userDao.findAll(PageRequest.of(page - 1, size));
+//        return pageUser;
     }
 
     public void deleteById(String id) {

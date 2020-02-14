@@ -126,6 +126,4 @@ public class UserController extends BaseController {
                 PageResult(searchPage.getTotalElements(), searchPage.getContent());
         return new Result(ResultCode.SUCCESS, pr);
     }
-
-
 }
