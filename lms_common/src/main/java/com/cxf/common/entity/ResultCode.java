@@ -10,8 +10,8 @@ public enum ResultCode {
     SERVER_ERROR(false, 99999, "抱歉，系统繁忙，请稍后重试！"),
 
     //---用户操作返回码----
-
-    MOBILEORPASSWORDERROR(false,20000,"用户名或密码错误");
+    MOBILEORPASSWORDERROR(false,20000,"用户名或密码错误"),
+    OLDPWDFAIL(false, 20001, "原密码错误");
 
     //---组织操作返回码----
     //---权限操作返回码----

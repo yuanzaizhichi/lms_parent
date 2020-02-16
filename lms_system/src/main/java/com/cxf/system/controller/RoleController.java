@@ -5,6 +5,7 @@ import com.cxf.common.entity.PageResult;
 import com.cxf.common.entity.Result;
 import com.cxf.common.entity.ResultCode;
 import com.cxf.domain.system.Role;
+import com.cxf.domain.system.response.RoleResult;
 import com.cxf.system.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -32,47 +33,61 @@ public class RoleController extends BaseController {
         return new Result(ResultCode.SUCCESS);
     }
 
-
-    //添加角色
+    /**
+     * 保存角色信息
+     */
     @RequestMapping(value = "/role", method = RequestMethod.POST)
-    public Result add(@RequestBody Role role) throws Exception {
+    public Result save(@RequestBody Role role) {
+        //默认公司编号为1,来自BaseController
         role.setCommunityId(communityId);
         roleService.save(role);
-        return Result.SUCCESS();
+        return new Result(ResultCode.SUCCESS);
     }
 
-    //更新角色
-    @RequestMapping(value = "/role/{id}", method = RequestMethod.PUT)
-    public Result update(@PathVariable(name = "id") String id, @RequestBody Role role)
-            throws Exception {
-        roleService.update(role);
-        return Result.SUCCESS();
-    }
-
-    //删除角色
-    @RequestMapping(value = "/role/{id}", method = RequestMethod.DELETE)
-    public Result delete(@PathVariable(name = "id") String id) throws Exception {
-        roleService.deleteById(id);
-        return Result.SUCCESS();
+    /**
+     * 获取所有角色信息
+     */
+    @RequestMapping(value = "/role/list", method = RequestMethod.GET)
+    public Result findAll() {
+        List<Role> roleList = roleService.findAll(communityId);
+        return new Result(ResultCode.SUCCESS, roleList);
     }
 
     /**
      * 根据ID获取角色信息
      */
     @RequestMapping(value = "/role/{id}", method = RequestMethod.GET)
-    public Result findById(@PathVariable(name = "id") String id) throws Exception {
+    public Result findById(@PathVariable String id) {
         Role role = roleService.findById(id);
-        return new Result(ResultCode.SUCCESS, role);
+        RoleResult roleResult = new RoleResult(role);
+        return new Result(ResultCode.SUCCESS, roleResult);
+    }
+
+    /**
+     * 根据ID更新角色信息
+     */
+    @RequestMapping(value = "/role/{id}", method = RequestMethod.PUT)
+    public Result update(@PathVariable String id, @RequestBody Role role) {
+        roleService.update(role);
+        return new Result(ResultCode.SUCCESS);
+    }
+
+    /**
+     * 根据ID删除角色信息
+     */
+    @RequestMapping(value = "/role/{id}", method = RequestMethod.DELETE)
+    public Result delete(@PathVariable String id) {
+        roleService.deleteById(id);
+        return new Result(ResultCode.SUCCESS);
     }
 
     /**
      * 分页查询角色
      */
     @RequestMapping(value = "/role", method = RequestMethod.GET)
-    public Result findByPage(int page, int pagesize, Role role) throws Exception {
+    public Result findByPage(int page, int pagesize, Role role) {
         Page<Role> searchPage = roleService.findByPage(communityId, page, pagesize);
-        PageResult<Role> pr = new
-                PageResult(searchPage.getTotalElements(), searchPage.getContent());
+        PageResult<Role> pr = new PageResult(searchPage.getTotalElements(), searchPage.getContent());
         return new Result(ResultCode.SUCCESS, pr);
     }
 

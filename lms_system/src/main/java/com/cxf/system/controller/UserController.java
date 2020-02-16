@@ -6,6 +6,7 @@ import com.cxf.common.entity.Result;
 import com.cxf.common.entity.ResultCode;
 import com.cxf.domain.system.User;
 import com.cxf.domain.system.response.ProfileResult;
+import com.cxf.domain.system.response.UserResult;
 import com.cxf.system.service.UserService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
@@ -27,6 +28,18 @@ public class UserController extends BaseController {
 
     @Autowired
     private UserService userService;
+
+    @RequestMapping(value = "/editpwd", method = RequestMethod.POST)
+    public Result editpwd(@RequestBody Map<String, Object> map) {
+        User user = userService.fingByMobild(mobile);
+        String oldpwd = new Md2Hash(map.get("oldpass"), "cxf666", 3).toString();
+        if (!oldpwd.equals(user.getPassword())) {
+            return new Result(ResultCode.OLDPWDFAIL);
+        }
+        String newpwd = new Md2Hash(map.get("pass"), "cxf666", 3).toString();
+        userService.updatepwd(mobile, newpwd);
+        return new Result(ResultCode.SUCCESS);
+    }
 
     /**
      * 登陆成功后，获取解析token获取用户信息
@@ -53,7 +66,7 @@ public class UserController extends BaseController {
         //shiro认证授权流程
         try {
             //1.构造登陆令牌
-            password = new Md2Hash(password, mobile, 3).toString();
+            password = new Md2Hash(password, "cxf666", 3).toString();
             UsernamePasswordToken uptoken = new UsernamePasswordToken(mobile, password);
             //2.获取subject
             Subject subject = SecurityUtils.getSubject();
@@ -110,8 +123,8 @@ public class UserController extends BaseController {
      */
     @RequestMapping(value = "/user/{id}", method = RequestMethod.GET)
     public Result findById(@PathVariable(name = "id") String id) throws Exception {
-        User user = userService.findById(id);
-        return new Result(ResultCode.SUCCESS, user);
+        UserResult userResult = userService.findById(id);
+        return new Result(ResultCode.SUCCESS, userResult);
     }
 
     /**
@@ -122,8 +135,7 @@ public class UserController extends BaseController {
             map) throws Exception {
         map.put("communityId", communityId);
         Page<User> searchPage = userService.findAll(map, page, pagesize);
-        PageResult<User> pr = new
-                PageResult(searchPage.getTotalElements(), searchPage.getContent());
+        PageResult<User> pr = new PageResult(searchPage.getTotalElements(), searchPage.getContent());
         return new Result(ResultCode.SUCCESS, pr);
     }
 }

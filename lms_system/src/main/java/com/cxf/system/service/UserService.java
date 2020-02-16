@@ -1,11 +1,15 @@
 package com.cxf.system.service;
 
 import com.cxf.common.utils.IdWorker;
+import com.cxf.common.utils.PropertyUtils;
+import com.cxf.domain.community.Community;
 import com.cxf.domain.system.Role;
 import com.cxf.domain.system.User;
+import com.cxf.domain.system.response.UserResult;
 import com.cxf.system.dao.RoleDao;
 import com.cxf.system.dao.UserDao;
 import org.apache.shiro.crypto.hash.Md2Hash;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,10 +17,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.*;
 
 @Service
@@ -30,6 +31,10 @@ public class UserService {
 
     @Autowired
     private RoleDao roleDao;
+
+    public void updatepwd(String mobile,String newpwd){
+        userDao.updatepwd(mobile,newpwd);
+    }
 
     /**
      * 根据mobile查询用户
@@ -57,7 +62,7 @@ public class UserService {
         user.setId(id);
         //默认密码123456
         user.setCreateTime(new Date());
-        user.setPassword(new Md2Hash("123456", user.getMobile(), 3).toString());
+        user.setPassword(new Md2Hash("123456", "cxf666", 3).toString());
         user.setLevel("user");
         user.setEnableState(1);//状态
         return userDao.save(user);
@@ -65,16 +70,17 @@ public class UserService {
 
     public User update(User user) {
         User target = userDao.findById(user.getId()).get();
-        target.setUsername(user.getUsername());
-        target.setPassword(user.getPassword());
-        target.setDepartmentId(user.getDepartmentId());
-        target.setDepartmentName(user.getDepartmentName());
+        //防止覆盖角色列表
+        user.setRoles(null);
+        //排除为null的属性后进行复制
+        BeanUtils.copyProperties(user, target, PropertyUtils.getNullPropertyNames(user));
         return userDao.save(target);
     }
 
-    public User findById(String id) {
+    public UserResult findById(String id) {
         Optional<User> byId = userDao.findById(id);
-        return byId.isPresent() ? byId.get() : null;
+        User user = byId.isPresent() ? byId.get() : null;
+        return new UserResult(user);
     }
 
     public Page findAll(Map<String, Object> map, int page, int size) {
@@ -84,6 +90,9 @@ public class UserService {
                 List<Predicate> list = new ArrayList<>();
                 if (!StringUtils.isEmpty(map.get("communityId"))) {
                     list.add(criteriaBuilder.equal(root.get("communityId").as(String.class), map.get("communityId")));
+                }
+                if (!StringUtils.isEmpty(map.get("query")) && map.get("query") != "") {
+                    list.add(criteriaBuilder.like(root.get("username").as(String.class), "%" + map.get("query") + "%"));
                 }
                 if (!StringUtils.isEmpty(map.get("departmentId"))) {
                     list.add(criteriaBuilder.equal(root.get("departmentId").as(String.class), map.get("departmentId")));
@@ -108,4 +117,5 @@ public class UserService {
     public void deleteById(String id) {
         userDao.deleteById(id);
     }
+
 }

@@ -15,6 +15,7 @@ public class BaseController {
     protected HttpServletResponse response;
     protected String communityId;
     protected String communityName;
+    protected String mobile;
 
 
     @ModelAttribute
@@ -31,6 +32,7 @@ public class BaseController {
             ProfileResult profileResult = (ProfileResult) previousPrincipals.getPrimaryPrincipal();
             this.communityId = profileResult.getCommunityId();
             this.communityName = profileResult.getCommunity();
+            this.mobile = profileResult.getMobile();
         }
     }
 
