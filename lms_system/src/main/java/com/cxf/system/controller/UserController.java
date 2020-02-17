@@ -4,6 +4,7 @@ import com.cxf.common.controller.BaseController;
 import com.cxf.common.entity.PageResult;
 import com.cxf.common.entity.Result;
 import com.cxf.common.entity.ResultCode;
+import com.cxf.common.poi.ExcelImportUtil;
 import com.cxf.domain.system.User;
 import com.cxf.domain.system.response.ProfileResult;
 import com.cxf.domain.system.response.UserResult;
@@ -17,6 +18,7 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -29,6 +31,25 @@ public class UserController extends BaseController {
     @Autowired
     private UserService userService;
 
+    /**
+     * 导入Excel，添加用户
+     * 文件上传：springboot
+     */
+    @RequestMapping(value = "/user/import", method = RequestMethod.POST)
+    public Result importUser(@RequestParam(name = "file") MultipartFile file) throws Exception {
+        //使用工具类进行导入
+        List<User> list = new ExcelImportUtil(User.class).readExcel(file.getInputStream(), 1, 1);
+        //3.批量保存用户
+        userService.saveAll(list, communityId, communityName);
+        return new Result(ResultCode.SUCCESS);
+    }
+
+    /**
+     * 修改密码
+     *
+     * @param map
+     * @return
+     */
     @RequestMapping(value = "/editpwd", method = RequestMethod.POST)
     public Result editpwd(@RequestBody Map<String, Object> map) {
         User user = userService.fingByMobild(mobile);
@@ -84,6 +105,7 @@ public class UserController extends BaseController {
     /**
      * 分配角色
      */
+    @RequiresPermissions(value = "API-USER-ROLES")
     @RequestMapping(value = "/user/assignRoles", method = RequestMethod.PUT)
     public Result save(@RequestBody Map<String, Object> map) {
         System.out.println(map);
@@ -94,6 +116,7 @@ public class UserController extends BaseController {
     }
 
     //保存用户
+    @RequiresPermissions(value = "API-USER-ADD")
     @RequestMapping(value = "/user", method = RequestMethod.POST)
     public Result add(@RequestBody User user) throws Exception {
         user.setCommunityId(communityId);
@@ -103,6 +126,7 @@ public class UserController extends BaseController {
     }
 
     //更新用户
+    @RequiresPermissions(value = "API-USER-UPDATE")
     @RequestMapping(value = "/user/{id}", method = RequestMethod.PUT)
     public Result update(@PathVariable(name = "id") String id, @RequestBody User user)
             throws Exception {

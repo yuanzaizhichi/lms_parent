@@ -7,9 +7,10 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="lms_community" />
-        <module name="lms_common_model" />
-        <module name="lms_common" />
+        <module name="lms_eureka" />
         <module name="lms_system" />
+        <module name="lms_common" />
+        <module name="lms_common_model" />
       </profile>
     </annotationProcessing>
   </component>
@@ -18,6 +19,7 @@
       <module name="lms_common" options="-parameters" />
       <module name="lms_common_model" options="-parameters" />
       <module name="lms_community" options="-parameters" />
+      <module name="lms_eureka" options="-parameters" />
       <module name="lms_system" options="-parameters" />
     </option>
   </component>

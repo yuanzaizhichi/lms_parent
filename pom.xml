@@ -12,6 +12,7 @@
         <module>lms_common_model</module>
         <module>lms_community</module>
         <module>lms_system</module>
+        <module>lms_eureka</module>
     </modules>
 
     <packaging>pom</packaging>
@@ -32,7 +33,36 @@
         <fastjson.version>1.2.47</fastjson.version>
     </properties>
 
+    <!--    使用SpringCloud中的服务发现组件Eureka,使微服务之间都可以互相调用-->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>Finchley.SR1</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
+        <!--poi -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>4.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>4.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml-schemas</artifactId>
+            <version>4.0.1</version>
+        </dependency>
         <!--shiro与spring整合 -->
         <dependency>
             <groupId>org.apache.shiro</groupId>
@@ -51,11 +81,11 @@
             <artifactId>shiro-redis</artifactId>
             <version>3.0.0</version>
         </dependency>
-<!--        热部署:因shiro进行授权时bug，需关闭热部署-->
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.boot</groupId>-->
-<!--            <artifactId>spring-boot-devtools</artifactId>-->
-<!--        </dependency>-->
+        <!--        热部署:因shiro进行授权时bug，需关闭热部署-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.springframework.boot</groupId>-->
+        <!--            <artifactId>spring-boot-devtools</artifactId>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -141,15 +171,15 @@
                 </configuration>
             </plugin>
 
-<!--&lt;!&ndash;            &lt;!&ndash;热部署配置&ndash;&gt;&ndash;&gt;&ndash;&gt;-->
-<!--            <plugin>-->
-<!--                <groupId>org.springframework.boot</groupId>-->
-<!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
-<!--                <configuration>-->
-<!--                    &lt;!&ndash;fork:如果没有该项配置,整个devtools不会起作用&ndash;&gt;-->
-<!--                    <fork>true</fork>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
+            <!--&lt;!&ndash;            &lt;!&ndash;热部署配置&ndash;&gt;&ndash;&gt;&ndash;&gt;-->
+            <!--            <plugin>-->
+            <!--                <groupId>org.springframework.boot</groupId>-->
+            <!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
+            <!--                <configuration>-->
+            <!--                    &lt;!&ndash;fork:如果没有该项配置,整个devtools不会起作用&ndash;&gt;-->
+            <!--                    <fork>true</fork>-->
+            <!--                </configuration>-->
+            <!--            </plugin>-->
         </plugins>
     </build>
 

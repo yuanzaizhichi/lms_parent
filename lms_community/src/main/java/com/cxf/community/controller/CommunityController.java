@@ -4,6 +4,7 @@ import com.cxf.common.entity.Result;
 import com.cxf.common.entity.ResultCode;
 import com.cxf.community.service.CommunityService;
 import com.cxf.domain.community.Community;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,7 @@ public class CommunityController {
      * @param community
      * @return
      */
+    @RequiresPermissions(value = "API-COM-ADD")
     @RequestMapping(value = "", method = RequestMethod.POST)
     public Result save(@RequestBody Community community) {
         if (community != null) {
@@ -37,6 +39,7 @@ public class CommunityController {
      * @param id
      * @return
      */
+    @RequiresPermissions(value = "API-COM-DELETE")
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public Result deleteById(@PathVariable String id) {
         if (!StringUtils.isEmpty(id)) {
@@ -52,6 +55,7 @@ public class CommunityController {
      * @param community
      * @return
      */
+    @RequiresPermissions(value = "API-COM-UPDATE")
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     public Result update(@PathVariable String id, @RequestBody Community community) {
         if (!StringUtils.isEmpty(id) && community != null) {

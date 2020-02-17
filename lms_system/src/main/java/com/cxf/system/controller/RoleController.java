@@ -7,6 +7,7 @@ import com.cxf.common.entity.ResultCode;
 import com.cxf.domain.system.Role;
 import com.cxf.domain.system.response.RoleResult;
 import com.cxf.system.service.RoleService;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +26,7 @@ public class RoleController extends BaseController {
     /**
      * 分配权限
      */
+    @RequiresPermissions(value = "API-ROLE-PERM")
     @RequestMapping(value = "/role/assignPrem", method = RequestMethod.PUT)
     public Result save(@RequestBody Map<String,Object> map) {
         String roleId = (String) map.get("id");
@@ -36,6 +38,7 @@ public class RoleController extends BaseController {
     /**
      * 保存角色信息
      */
+    @RequiresPermissions(value = "API-ROLE-ADD")
     @RequestMapping(value = "/role", method = RequestMethod.POST)
     public Result save(@RequestBody Role role) {
         //默认公司编号为1,来自BaseController
@@ -66,6 +69,7 @@ public class RoleController extends BaseController {
     /**
      * 根据ID更新角色信息
      */
+    @RequiresPermissions(value = "API-ROLE-UPDATE")
     @RequestMapping(value = "/role/{id}", method = RequestMethod.PUT)
     public Result update(@PathVariable String id, @RequestBody Role role) {
         roleService.update(role);
@@ -75,6 +79,7 @@ public class RoleController extends BaseController {
     /**
      * 根据ID删除角色信息
      */
+    @RequiresPermissions(value = "API-ROLE-DELETE")
     @RequestMapping(value = "/role/{id}", method = RequestMethod.DELETE)
     public Result delete(@PathVariable String id) {
         roleService.deleteById(id);

@@ -1,5 +1,6 @@
 package com.cxf.domain.system;
 
+import com.cxf.domain.poi.ExcelAttribute;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,10 +26,12 @@ public class User implements Serializable {
     /**
      * 手机号码
      */
+    @ExcelAttribute(sort = 2)
     private String mobile;
     /**
      * 用户名称
      */
+    @ExcelAttribute(sort = 1)
     private String username;
     /**
      * 密码
@@ -51,20 +54,24 @@ public class User implements Serializable {
     /**
      * 部门ID
      */
+    @ExcelAttribute(sort = 6)
     private String departmentId;
 
     /**
      * 加入时间
      */
+    @ExcelAttribute(sort = 5)
     private Date timeOfEntry;
 
     /**
      * 学号
      */
+    @ExcelAttribute(sort = 3)
     private String studentId;
     /**
      * 系别
      */
+    @ExcelAttribute(sort = 4)
     private String system;
 
 
