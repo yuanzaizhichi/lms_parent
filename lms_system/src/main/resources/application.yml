@@ -11,6 +11,11 @@ spring:
   #应用配置
   application:
     name: lms-system
+  #文件上传大小
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
   #数据库连接池
   datasource:
     driver-class-name: com.mysql.jdbc.Driver

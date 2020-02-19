@@ -2,6 +2,7 @@ package com.cxf.system.service;
 
 import com.cxf.common.utils.IdWorker;
 import com.cxf.common.utils.PropertyUtils;
+import com.cxf.common.utils.QiniuUploadUtil;
 import com.cxf.domain.community.Department;
 import com.cxf.domain.system.Role;
 import com.cxf.domain.system.User;
@@ -9,6 +10,7 @@ import com.cxf.domain.system.response.UserResult;
 import com.cxf.system.client.DepartmentFeignClient;
 import com.cxf.system.dao.RoleDao;
 import com.cxf.system.dao.UserDao;
+import com.sun.org.apache.xml.internal.security.utils.Base64;
 import org.apache.shiro.crypto.hash.Md2Hash;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -39,6 +42,37 @@ public class UserService {
 
     @Autowired
     private DepartmentFeignClient departmentFeignClient;
+
+    /**
+     * 完成用户头像上传(七牛云) 以及
+     * 注册到百度AI人脸库
+     *
+     * @param id
+     * @param file
+     * @return
+     */
+    public String uplaodImage(String id, MultipartFile file) throws Exception {
+        //1.根据id查询用户
+        Optional<User> byId = userDao.findById(id);
+        User user = byId.isPresent() ? byId.get() : null;
+        String imgUrl = new QiniuUploadUtil().upload(user.getId(), file.getBytes());
+        //3.更新用户头像地址
+        user.setStaffPhoto(imgUrl);
+        userDao.save(user);
+        //使用dataurl进行存储图片，对图片byte数组进行base64编码
+//        String encode = Base64.encode(file.getBytes());
+        //注册/更新到百度AI人脸库
+//        Boolean aBoolean = baiduAiUtil.faceExist(id);
+//        if (aBoolean){
+//            //人脸已存在 -- 更新操作
+//            baiduAiUtil.faceUpdate(id,encode);
+//        }else{
+//            //人脸不存在 -- 注册操作
+//            baiduAiUtil.faceRegister(id,encode);
+//        }
+        //4.返回地址
+        return imgUrl;
+    }
 
     /**
      * 批量保存用户

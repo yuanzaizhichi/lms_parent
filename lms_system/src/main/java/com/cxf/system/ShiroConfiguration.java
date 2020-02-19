@@ -59,6 +59,8 @@ public class ShiroConfiguration {
         //anon -- 匿名访问（所有人可以访问）
         filterMap.put("/sys/login", "anon");
         filterMap.put("/autherror", "anon");
+        filterMap.put("/sys/download", "anon");
+        filterMap.put("/sys/user/*/pdf", "anon");
 //        filterMap.put("/sys/faceLogin/**", "anon");
 
         //authc -- 认证后访问（登陆认证成功后）

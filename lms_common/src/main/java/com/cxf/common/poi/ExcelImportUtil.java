@@ -17,55 +17,49 @@ import java.util.List;
 
 
 public class ExcelImportUtil<T> {
- 
+
     private Class clazz;
-    private  Field fields[];
- 
+    private Field fields[];
+
     public ExcelImportUtil(Class clazz) {
         this.clazz = clazz;
         fields = clazz.getDeclaredFields();
     }
- 
+
     /**
      * 基于注解读取excel
-     *    is :  文件上传的流信息
-     *    rowIndex :  读取数据起始行
-     *    cellIndex :   读取数据起始单元格
+     * is :  文件上传的流信息
+     * rowIndex :  读取数据起始行
+     * cellIndex :   读取数据起始单元格
      */
-    public List<T> readExcel(InputStream is, int rowIndex,int cellIndex) {
+    public List<T> readExcel(InputStream is, int rowIndex, int cellIndex) throws Exception{
         List<T> list = new ArrayList<T>();
         T entity = null;
-        try {
-            XSSFWorkbook workbook = new XSSFWorkbook(is);
-            Sheet sheet = workbook.getSheetAt(0);
-            // 不准确
-            int rowLength = sheet.getLastRowNum();
+        XSSFWorkbook workbook = new XSSFWorkbook(is);
+        Sheet sheet = workbook.getSheetAt(0);
+        // 不准确
+        int rowLength = sheet.getLastRowNum();
 
-            System.out.println(sheet.getLastRowNum());
-            for (int rowNum = rowIndex; rowNum <= sheet.getLastRowNum(); rowNum++) {
-                Row row = sheet.getRow(rowNum);
-                entity = (T) clazz.newInstance();
-                System.out.println(row.getLastCellNum());
-                for (int j = cellIndex; j < row.getLastCellNum(); j++) {
-                    Cell cell = row.getCell(j);
-                    for (Field field : fields) {
-                        if(field.isAnnotationPresent(ExcelAttribute.class)){
-                            field.setAccessible(true);
-                            ExcelAttribute ea = field.getAnnotation(ExcelAttribute.class);
-                            if(j == ea.sort()) {
-                                field.set(entity, covertAttrType(field, cell));
-                            }
+        for (int rowNum = rowIndex; rowNum <= sheet.getLastRowNum(); rowNum++) {
+            Row row = sheet.getRow(rowNum);
+            entity = (T) clazz.newInstance();
+            for (int j = cellIndex; j < row.getLastCellNum(); j++) {
+                Cell cell = row.getCell(j);
+                for (Field field : fields) {
+                    if (field.isAnnotationPresent(ExcelAttribute.class)) {
+                        field.setAccessible(true);
+                        ExcelAttribute ea = field.getAnnotation(ExcelAttribute.class);
+                        if (j == ea.sort()) {
+                            field.set(entity, covertAttrType(field, cell));
                         }
                     }
                 }
-                list.add(entity);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+            list.add(entity);
         }
         return list;
     }
- 
+
 
     /**
      * 类型转换 将cell 单元格格式转为 字段类型
@@ -74,20 +68,21 @@ public class ExcelImportUtil<T> {
         String fieldType = field.getType().getSimpleName();
         if ("String".equals(fieldType)) {
             return getValue(cell);
-        }else if ("Date".equals(fieldType)) {
-            return new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(getValue(cell)) ;
-        }else if ("int".equals(fieldType) || "Integer".equals(fieldType)) {
+        } else if ("Date".equals(fieldType)) {
+            return new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(getValue(cell));
+        } else if ("int".equals(fieldType) || "Integer".equals(fieldType)) {
             return Integer.parseInt(getValue(cell));
-        }else if ("double".equals(fieldType) || "Double".equals(fieldType)) {
+        } else if ("double".equals(fieldType) || "Double".equals(fieldType)) {
             return Double.parseDouble(getValue(cell));
-        }else {
+        } else {
             return null;
         }
     }
- 
- 
+
+
     /**
      * 格式转为String
+     *
      * @param cell
      * @return
      */

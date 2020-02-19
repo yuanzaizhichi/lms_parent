@@ -5,10 +5,12 @@ import com.cxf.common.entity.PageResult;
 import com.cxf.common.entity.Result;
 import com.cxf.common.entity.ResultCode;
 import com.cxf.common.poi.ExcelImportUtil;
+import com.cxf.common.utils.BeanMapUtils;
 import com.cxf.domain.system.User;
 import com.cxf.domain.system.response.ProfileResult;
 import com.cxf.domain.system.response.UserResult;
 import com.cxf.system.service.UserService;
+import net.sf.jasperreports.engine.*;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -16,11 +18,18 @@ import org.apache.shiro.crypto.hash.Md2Hash;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,15 +41,89 @@ public class UserController extends BaseController {
     private UserService userService;
 
     /**
+     * 打印员工pdf报表
+     */
+    @RequestMapping(value = "/user/{id}/pdf", method = RequestMethod.GET)
+    public void pdf(@PathVariable String id) throws Exception {
+        //1.引入jasper文件
+        Resource resource = new ClassPathResource("templates/Leaf_Grey_Table_Based.jasper");
+        FileInputStream is = new FileInputStream(resource.getFile());
+        ServletOutputStream os = response.getOutputStream();
+        //构造数据:
+        //用户详情
+        UserResult userResult = userService.findById(id);
+        //用户头像
+        String staffPhoto = "http://q5w3hueh5.bkt.clouddn.com/" + id;
+        Map param = new HashMap<>();
+        param.put("staffPhoto", staffPhoto);
+        Map<String, Object> userResultMap = BeanMapUtils.beanToMap(userResult);
+        param.putAll(userResultMap);
+        try {
+            //2.创建JasperPrint，向jsaper文件中填充数据
+            JasperPrint jasperPrint = JasperFillManager.fillReport(is, param, new JREmptyDataSource());
+            //3.将JasperPrint已pdf形式输出
+            JasperExportManager.exportReportToPdfStream(jasperPrint, os);
+        } catch (JRException e) {
+            e.printStackTrace();
+        } finally {
+            os.flush();
+        }
+    }
+
+    /**
+     * 上传用户头像
+     * @param id
+     * @param file
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/user/upload/{id}", method = RequestMethod.POST)
+    public Result upload(@PathVariable String id, @RequestParam(name = "file") MultipartFile file) throws Exception {
+        //1.调用server保存图片
+        String imgUrl = userService.uplaodImage(id, file);
+        //2.返回数据
+        return new Result(ResultCode.SUCCESS, imgUrl);
+    }
+
+    /**
+     * 模板下载
+     */
+    @RequestMapping(value = "/download", method = RequestMethod.GET)
+    public void download() {
+        File f = new File("E:\\IDEAprojects\\lms_parent\\lms_common\\src\\main\\java\\com\\cxf\\common\\file\\导入数据模板.xlsx");
+        try (
+                FileInputStream input = new FileInputStream(f);
+                OutputStream out = response.getOutputStream();
+        ) {
+            //设置要下载的文件的名称
+            response.setHeader("Content-disposition", "attachment;fileName=" + new String("导入数据模板.xlsx".getBytes("gb2312"), "ISO8859-1"));
+            //通知客服文件的MIME类型
+            response.setContentType("application/vnd.ms-excel;charset=UTF-8");
+            byte[] b = new byte[2048];
+            int len;
+            while ((len = input.read(b)) != -1) {
+                out.write(b, 0, len);
+            }
+            response.setHeader("Content-Length", String.valueOf(input.getChannel().size()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * 导入Excel，添加用户
      * 文件上传：springboot
      */
     @RequestMapping(value = "/user/import", method = RequestMethod.POST)
-    public Result importUser(@RequestParam(name = "file") MultipartFile file) throws Exception {
-        //使用工具类进行导入
-        List<User> list = new ExcelImportUtil(User.class).readExcel(file.getInputStream(), 1, 1);
-        //3.批量保存用户
-        userService.saveAll(list, communityId, communityName);
+    public Result importUser(@RequestParam(name = "file") MultipartFile file) {
+        try {
+            //使用工具类进行导入
+            List<User> list = new ExcelImportUtil(User.class).readExcel(file.getInputStream(), 2, 1);
+            //3.批量保存用户
+            userService.saveAll(list, communityId, communityName);
+        } catch (Exception e) {
+            return new Result(ResultCode.UPLOADFILEERROR);
+        }
         return new Result(ResultCode.SUCCESS);
     }
 

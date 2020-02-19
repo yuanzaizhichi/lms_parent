@@ -80,6 +80,9 @@ public class UserResult implements Serializable {
 
     private List<String> roleIds = new ArrayList<>();
 
+    //用户头像
+    private String staffPhoto;
+
     public UserResult(User user) {
         BeanUtils.copyProperties(user,this);
         for (Role role : user.getRoles()) {

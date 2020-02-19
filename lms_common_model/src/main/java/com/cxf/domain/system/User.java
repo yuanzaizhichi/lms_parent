@@ -86,8 +86,8 @@ public class User implements Serializable {
      */
     private String level;
 
-//    //用户头像
-//    private String staffPhoto;
+    //用户头像
+    private String staffPhoto;
 
 
 //    public User(Object [] values) {
