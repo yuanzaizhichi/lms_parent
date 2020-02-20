@@ -13,6 +13,7 @@
         <module>lms_community</module>
         <module>lms_system</module>
         <module>lms_eureka</module>
+        <module>lms_activity</module>
     </modules>
 
     <packaging>pom</packaging>
