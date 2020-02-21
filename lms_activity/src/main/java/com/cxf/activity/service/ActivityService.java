@@ -4,7 +4,6 @@ import com.cxf.activity.dao.ActivityDao;
 import com.cxf.common.utils.IdWorker;
 import com.cxf.common.utils.PropertyUtils;
 import com.cxf.domain.activity.Activity;
-import com.cxf.domain.system.User;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -33,6 +32,14 @@ public class ActivityService {
     private IdWorker idWorker;
 
     /**
+     * 结束活动
+     * @param id
+     */
+    public void endAct(String id){
+        activityDao.endAct(id);
+    }
+
+    /**
      * 增加活动
      *
      * @param activity
@@ -42,7 +49,7 @@ public class ActivityService {
         activity.setId(idWorker.nextId() + "");
         activity.setApplyTime(new Date());
         activity.setState(0);
-        activity.setScore(0);
+        activity.setScore(null);
         return activityDao.save(activity);
     }
 
@@ -80,6 +87,9 @@ public class ActivityService {
                 List<Predicate> list = new ArrayList<>();
                 if (!StringUtils.isEmpty(map.get("communityId"))) {
                     list.add(criteriaBuilder.equal(root.get("communityId").as(String.class), map.get("communityId")));
+                }
+                if (!StringUtils.isEmpty(map.get("query")) && map.get("query") != "") {
+                    list.add(criteriaBuilder.like(root.get("name").as(String.class), "%" + map.get("query") + "%"));
                 }
                 return criteriaBuilder.and(list.toArray(new Predicate[list.size()]));
             }

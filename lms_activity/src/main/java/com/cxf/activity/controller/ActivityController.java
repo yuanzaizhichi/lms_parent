@@ -20,6 +20,12 @@ public class ActivityController extends BaseController {
     @Autowired
     private ActivityService activityService;
 
+    @RequestMapping(value = "/{id}/endact", method = RequestMethod.PUT)
+    public Result endAct(@PathVariable String id) {
+        activityService.endAct(id);
+        return new Result(ResultCode.SUCCESS);
+    }
+
     @RequestMapping(value = "", method = RequestMethod.POST)
     public Result save(@RequestBody Activity activity) {
         activity.setCommunityId(communityId);

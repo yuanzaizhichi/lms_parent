@@ -37,6 +37,6 @@ public class Activity implements Serializable {
 
     private Integer state;
 
-    private Integer score;
+    private String score;
 
 }
