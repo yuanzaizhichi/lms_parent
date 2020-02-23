@@ -31,11 +31,17 @@ public class ActivityService {
     @Autowired
     private IdWorker idWorker;
 
+    public void rate(String id, Integer point) {
+        activityDao.rate(id, point);
+    }
+
+
     /**
      * 结束活动
+     *
      * @param id
      */
-    public void endAct(String id){
+    public void endAct(String id) {
         activityDao.endAct(id);
     }
 
@@ -87,6 +93,18 @@ public class ActivityService {
                 List<Predicate> list = new ArrayList<>();
                 if (!StringUtils.isEmpty(map.get("communityId"))) {
                     list.add(criteriaBuilder.equal(root.get("communityId").as(String.class), map.get("communityId")));
+                }
+                if (!StringUtils.isEmpty(map.get("scale"))) {
+                    list.add(criteriaBuilder.equal(root.get("scale").as(String.class), map.get("scale")));
+                }
+                if (!StringUtils.isEmpty(map.get("type"))) {
+                    list.add(criteriaBuilder.equal(root.get("type").as(String.class), map.get("type")));
+                }
+                if (!StringUtils.isEmpty(map.get("state"))) {
+                    list.add(criteriaBuilder.equal(root.get("state").as(Integer.class), map.get("state")));
+                }
+                if (!StringUtils.isEmpty(map.get("score"))) {
+                    list.add(criteriaBuilder.equal(root.get("score").as(Integer.class), map.get("score")));
                 }
                 if (!StringUtils.isEmpty(map.get("query")) && map.get("query") != "") {
                     list.add(criteriaBuilder.like(root.get("name").as(String.class), "%" + map.get("query") + "%"));

@@ -20,6 +20,12 @@ public class ActivityController extends BaseController {
     @Autowired
     private ActivityService activityService;
 
+    @RequestMapping(value = "/{id}/rate", method = RequestMethod.PUT)
+    public Result rate(@PathVariable String id, @RequestBody Integer point) {
+        activityService.rate(id,point);
+        return new Result(ResultCode.SUCCESS);
+    }
+
     @RequestMapping(value = "/{id}/endact", method = RequestMethod.PUT)
     public Result endAct(@PathVariable String id) {
         activityService.endAct(id);
@@ -29,6 +35,7 @@ public class ActivityController extends BaseController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     public Result save(@RequestBody Activity activity) {
         activity.setCommunityId(communityId);
+        activity.setCommunityName(communityName);
         activityService.save(activity);
         return new Result(ResultCode.SUCCESS);
     }
@@ -36,7 +43,9 @@ public class ActivityController extends BaseController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public Result findByPage(int page, int pagesize, @RequestParam Map<String, Object>
             map) throws Exception {
-        map.put("communityId", communityId);
+        if (map.get("communityId") == null){
+            map.put("communityId", communityId);
+        }
         Page<User> searchPage = activityService.findAll(map, page, pagesize);
         PageResult<User> pr = new PageResult(searchPage.getTotalElements(), searchPage.getContent());
         return new Result(ResultCode.SUCCESS, pr);

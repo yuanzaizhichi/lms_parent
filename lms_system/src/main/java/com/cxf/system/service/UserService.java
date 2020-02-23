@@ -172,6 +172,9 @@ public class UserService {
                 if (!StringUtils.isEmpty(map.get("departmentId"))) {
                     list.add(criteriaBuilder.equal(root.get("departmentId").as(String.class), map.get("departmentId")));
                 }
+                if (!StringUtils.isEmpty(map.get("selectDep"))) {
+                    list.add(criteriaBuilder.equal(root.get("departmentName").as(String.class), map.get("selectDep")));
+                }
                 if (!StringUtils.isEmpty(map.get("hasDept"))) {
                     if ("0".equals((String) map.get("hasDept"))) {
                         list.add(criteriaBuilder.isNull(root.get("departmentId")));
@@ -193,4 +196,9 @@ public class UserService {
         userDao.deleteById(id);
     }
 
+    public void deletelist(List<User> idArr){
+        for (User user : idArr) {
+            deleteById(user.getId());
+        }
+    }
 }

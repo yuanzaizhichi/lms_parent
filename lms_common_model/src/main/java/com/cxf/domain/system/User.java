@@ -79,18 +79,21 @@ public class User implements Serializable {
 
     /**
      * level
-     *     String
-     *          lmsAdmin：lms管理员具备所有权限
-     *          coAdmin：组织管理
-     *          user：普通用户（需要分配角色）
+     * String
+     * lmsAdmin：lms管理员具备所有权限
+     * coAdmin：组织管理
+     * user：普通用户（需要分配角色）
      */
     private String level;
 
     //用户头像
     private String staffPhoto;
 
+    public User(String id) {
+        this.id = id;
+    }
 
-//    public User(Object [] values) {
+    //    public User(Object [] values) {
 //        //用户名	手机号	工号	聘用 形式	入职 时间	部门编码
 //        this.username = values[1].toString();
 //        this.mobile = values[2].toString();

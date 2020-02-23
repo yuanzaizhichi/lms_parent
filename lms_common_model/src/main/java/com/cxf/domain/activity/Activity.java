@@ -35,8 +35,10 @@ public class Activity implements Serializable {
 
     private String communityId;
 
+    private String communityName;
+
     private Integer state;
 
-    private String score;
+    private Integer score;
 
 }

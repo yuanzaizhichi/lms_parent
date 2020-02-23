@@ -40,6 +40,13 @@ public class UserController extends BaseController {
     @Autowired
     private UserService userService;
 
+    //批量删除
+    @RequestMapping(value = "/user/del", method = RequestMethod.POST)
+    public Result deletelist(@RequestBody List<User> idArr) throws Exception {
+        userService.deletelist(idArr);
+        return new Result(ResultCode.SUCCESS);
+    }
+
     /**
      * 打印员工pdf报表
      */

@@ -13,4 +13,10 @@ public interface ActivityDao extends JpaRepository<Activity, String>, JpaSpecifi
     @Transactional
     @Query(value = "update Activity a set a.state =1 where a.id=?1")
     void endAct(String id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "update Activity a set a.score =?2 where a.id=?1")
+    void rate(String id, Integer point);
+
 }
