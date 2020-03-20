@@ -43,9 +43,25 @@ public class UserService {
     @Autowired
     private DepartmentFeignClient departmentFeignClient;
 
+    public void resetPwd(String id){
+        userDao.resetPwd(id);
+    }
+
+    public User addComAdmin(User user) {
+        String id = idWorker.nextId() + "";
+        user.setId(id);
+        //默认密码123456
+        user.setCreateTime(new Date());
+        user.setPassword(new Md2Hash("123456", "cxf666", 3).toString());
+        //设置为组织管理员
+        user.setUsername("组织管理员");
+        user.setLevel("coAdmin");
+        user.setEnableState(1);//状态
+        return userDao.save(user);
+    }
+
     /**
-     * 完成用户头像上传(七牛云) 以及
-     * 注册到百度AI人脸库
+     * 完成用户头像上传(七牛云)
      *
      * @param id
      * @param file
@@ -59,17 +75,6 @@ public class UserService {
         //3.更新用户头像地址
         user.setStaffPhoto(imgUrl);
         userDao.save(user);
-        //使用dataurl进行存储图片，对图片byte数组进行base64编码
-//        String encode = Base64.encode(file.getBytes());
-        //注册/更新到百度AI人脸库
-//        Boolean aBoolean = baiduAiUtil.faceExist(id);
-//        if (aBoolean){
-//            //人脸已存在 -- 更新操作
-//            baiduAiUtil.faceUpdate(id,encode);
-//        }else{
-//            //人脸不存在 -- 注册操作
-//            baiduAiUtil.faceRegister(id,encode);
-//        }
         //4.返回地址
         return imgUrl;
     }

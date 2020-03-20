@@ -46,7 +46,7 @@ public class DepartmentService extends BaseService<Department> {
     }
 
     /**
-     * 根据部门编码和企业id查询部门
+     * 根据部门编码和组织id查询部门
      */
     public Department findByCode(String code, String communityId) {
         return departmentDao.findByCodeAndCommunityId(code,communityId);

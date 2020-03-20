@@ -40,6 +40,25 @@ public class UserController extends BaseController {
     @Autowired
     private UserService userService;
 
+    @RequestMapping(value = "/{id}/resetpwd",method = RequestMethod.PUT)
+    public Result resetPwd(@PathVariable String id){
+        userService.resetPwd(id);
+        return new Result(ResultCode.SUCCESS);
+    }
+
+    //创建新组织时添加默认组织管理员用户
+    @RequestMapping(value = "/user/comAdmin", method = RequestMethod.POST)
+    public User addComAdmin(@RequestParam(value = "mobile") String mobile,
+                              @RequestParam(value = "communityId") String communityId,
+                              @RequestParam(value = "communityName") String communityName) throws Exception {
+        User user = new User();
+        user.setMobile(mobile);
+        user.setCommunityId(communityId);
+        user.setCommunityName(communityName);
+        User comUser = userService.addComAdmin(user);
+        return comUser;
+    }
+
     //批量删除
     @RequestMapping(value = "/user/del", method = RequestMethod.POST)
     public Result deletelist(@RequestBody List<User> idArr) throws Exception {
@@ -174,6 +193,15 @@ public class UserController extends BaseController {
     public Result login(@RequestBody Map<String, Object> loginMap) {
         String mobile = (String) loginMap.get("mobile");
         String password = (String) loginMap.get("password");
+        User user = userService.fingByMobild(mobile);
+        //用户是否存在
+        if (user == null){
+            return new Result(ResultCode.USERNOTFIND);
+        }
+        //用户是否被禁用
+        if (user.getEnableState() != 1){
+            return new Result(ResultCode.USERENABLESTATE);
+        }
         //shiro认证授权流程
         try {
             //1.构造登陆令牌
@@ -197,7 +225,7 @@ public class UserController extends BaseController {
      */
     @RequiresPermissions(value = "API-USER-ROLES")
     @RequestMapping(value = "/user/assignRoles", method = RequestMethod.PUT)
-    public Result save(@RequestBody Map<String, Object> map) {
+    public Result assignRoles(@RequestBody Map<String, Object> map) {
         System.out.println(map);
         String id = (String) map.get("id");
         List<String> roleidslist = (List<String>) map.get("roleIds");
@@ -247,7 +275,9 @@ public class UserController extends BaseController {
     @RequestMapping(value = "/user", method = RequestMethod.GET)
     public Result findByPage(int page, int pagesize, @RequestParam Map<String, Object>
             map) throws Exception {
-        map.put("communityId", communityId);
+        if (map.get("communityId") == null){
+            map.put("communityId", communityId);
+        }
         Page<User> searchPage = userService.findAll(map, page, pagesize);
         PageResult<User> pr = new PageResult(searchPage.getTotalElements(), searchPage.getContent());
         return new Result(ResultCode.SUCCESS, pr);

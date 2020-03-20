@@ -10,6 +10,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/community")
@@ -87,7 +88,7 @@ public class CommunityController {
      */
     @RequestMapping(value = "", method = RequestMethod.GET)
     public Result findAll() {
-        List<Community> communityList = communityService.findAll();
-        return new Result(ResultCode.SUCCESS, communityList);
+        List<Map<String,Object>> lstResylt = communityService.findAll();
+        return new Result(ResultCode.SUCCESS, lstResylt);
     }
 }

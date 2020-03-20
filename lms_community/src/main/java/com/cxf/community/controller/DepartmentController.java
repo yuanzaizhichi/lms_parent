@@ -35,7 +35,6 @@ public class DepartmentController extends BaseController {
 
     @RequestMapping(value = "/department", method = RequestMethod.GET)
     public Result findAll() {
-        //默认组织编号为篮球社团,来自BaseController
         Community community = communityService.findById(communityId);
         List<Department> departmentList = departmentService.findAll(communityId);
         DeptListResult deptListResult = new DeptListResult(community, departmentList);

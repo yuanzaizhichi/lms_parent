@@ -12,7 +12,9 @@ public enum ResultCode {
     //---用户操作返回码----
     MOBILEORPASSWORDERROR(false,20000,"用户名或密码错误"),
     OLDPWDFAIL(false, 20001, "原密码错误"),
-    UPLOADFILEERROR(false, 20002, "上传文件错误");
+    UPLOADFILEERROR(false, 20002, "上传文件错误"),
+    USERENABLESTATE(false, 20003, "该用户已被禁用"),
+    USERNOTFIND(false, 20004, "该用户不存在");
 
     //---组织操作返回码----
     //---权限操作返回码----
