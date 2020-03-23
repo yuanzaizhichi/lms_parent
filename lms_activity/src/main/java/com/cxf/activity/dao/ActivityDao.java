@@ -19,4 +19,6 @@ public interface ActivityDao extends JpaRepository<Activity, String>, JpaSpecifi
     @Query(value = "update Activity a set a.score =?2 where a.id=?1")
     void rate(String id, Integer point);
 
+    @Transactional
+    void deleteActivitiesByCommunityId(String id);
 }

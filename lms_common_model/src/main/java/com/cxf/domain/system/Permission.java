@@ -44,6 +44,8 @@ public class Permission implements Serializable {
 
     private Integer enVisible;
 
+    private Integer sort;
+
     public Permission(String name, Integer type, String code, String description) {
         this.name = name;
         this.type = type;

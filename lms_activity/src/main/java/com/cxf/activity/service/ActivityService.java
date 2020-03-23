@@ -125,4 +125,8 @@ public class ActivityService {
     public Activity findById(String id) {
         return activityDao.findById(id).get();
     }
+
+    public void delByCommunnityId(String communityId) {
+        activityDao.deleteActivitiesByCommunityId(communityId);
+    }
 }

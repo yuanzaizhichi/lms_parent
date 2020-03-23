@@ -59,6 +59,12 @@ public class ShiroConfiguration {
         filterMap.put("/sys/login", "anon");
         filterMap.put("/autherror", "anon");
 //        filterMap.put("/sys/faceLogin/**", "anon");
+        filterMap.put("/swagger-ui.html", "anon");
+        filterMap.put("/swagger-resources/**", "anon");
+        filterMap.put("/v2/api-docs", "anon");
+        filterMap.put("/webjars/springfox-swagger-ui/**", "anon");
+        //登陆前判断其所在组织是否被禁用，所以有此配置
+        filterMap.put("/community/feign/**", "anon");
 
         //authc -- 认证后访问（登陆认证成功后）
         filterMap.put("/**", "authc");

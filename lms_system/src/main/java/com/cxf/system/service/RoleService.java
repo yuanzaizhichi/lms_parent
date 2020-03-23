@@ -8,6 +8,7 @@ import com.cxf.domain.system.Role;
 import com.cxf.system.dao.PermissionDao;
 import com.cxf.system.dao.RoleDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -69,11 +70,15 @@ public class RoleService extends BaseService<Role> {
         return roleDao.findAll(getSpec(communityId));
     }
 
-    public void deleteById(String id) {
+    public void deleteById(String id) throws DataIntegrityViolationException {
         roleDao.deleteById(id);
     }
 
     public Page<Role> findByPage(String companyId, int page, int size) {
         return roleDao.findAll(getSpec(companyId), PageRequest.of(page - 1, size));
+    }
+
+    public void delRoleByCommunityId(String communityId) {
+        roleDao.deleteByCommunityId(communityId);
     }
 }

@@ -6,11 +6,15 @@ import com.cxf.common.entity.Result;
 import com.cxf.common.entity.ResultCode;
 import com.cxf.common.poi.ExcelImportUtil;
 import com.cxf.common.utils.BeanMapUtils;
+import com.cxf.domain.community.Community;
 import com.cxf.domain.system.User;
 import com.cxf.domain.system.response.ProfileResult;
 import com.cxf.domain.system.response.UserResult;
+import com.cxf.system.client.CommunityFeignClient;
 import com.cxf.system.service.UserService;
+import com.netflix.discovery.converters.Auto;
 import net.sf.jasperreports.engine.*;
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -40,8 +44,21 @@ public class UserController extends BaseController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping(value = "/{id}/resetpwd",method = RequestMethod.PUT)
-    public Result resetPwd(@PathVariable String id){
+    @Autowired
+    private CommunityFeignClient communityFeignClient;
+
+    /**
+     * 删除组织时删除所有用户
+     *
+     * @param communityId
+     */
+    @RequestMapping(value = "/user/feign/delete", method = RequestMethod.POST)
+    public void delByCommunityId(@RequestParam(value = "communityId") String communityId){
+        userService.deleteByCommunityId(communityId);
+    }
+
+    @RequestMapping(value = "/{id}/resetpwd", method = RequestMethod.PUT)
+    public Result resetPwd(@PathVariable String id) {
         userService.resetPwd(id);
         return new Result(ResultCode.SUCCESS);
     }
@@ -49,8 +66,8 @@ public class UserController extends BaseController {
     //创建新组织时添加默认组织管理员用户
     @RequestMapping(value = "/user/comAdmin", method = RequestMethod.POST)
     public User addComAdmin(@RequestParam(value = "mobile") String mobile,
-                              @RequestParam(value = "communityId") String communityId,
-                              @RequestParam(value = "communityName") String communityName) throws Exception {
+                            @RequestParam(value = "communityId") String communityId,
+                            @RequestParam(value = "communityName") String communityName) throws Exception {
         User user = new User();
         user.setMobile(mobile);
         user.setCommunityId(communityId);
@@ -98,6 +115,7 @@ public class UserController extends BaseController {
 
     /**
      * 上传用户头像
+     *
      * @param id
      * @param file
      * @return
@@ -195,12 +213,17 @@ public class UserController extends BaseController {
         String password = (String) loginMap.get("password");
         User user = userService.fingByMobild(mobile);
         //用户是否存在
-        if (user == null){
+        if (user == null) {
             return new Result(ResultCode.USERNOTFIND);
         }
         //用户是否被禁用
-        if (user.getEnableState() != 1){
+        if (user.getEnableState() != 1) {
             return new Result(ResultCode.USERENABLESTATE);
+        }
+        //用户所在组织是否被禁用
+        Community community = communityFeignClient.findComById(user.getCommunityId());
+        if (community.getState() != 1){
+            return new Result(ResultCode.COMMUNITYENABLESTATE);
         }
         //shiro认证授权流程
         try {
@@ -275,7 +298,7 @@ public class UserController extends BaseController {
     @RequestMapping(value = "/user", method = RequestMethod.GET)
     public Result findByPage(int page, int pagesize, @RequestParam Map<String, Object>
             map) throws Exception {
-        if (map.get("communityId") == null){
+        if (map.get("communityId") == null) {
             map.put("communityId", communityId);
         }
         Page<User> searchPage = userService.findAll(map, page, pagesize);

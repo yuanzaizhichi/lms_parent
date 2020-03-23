@@ -3,6 +3,7 @@ package com.cxf.common.entity;
 public enum ResultCode {
 
     SUCCESS(true, 10000, "操作成功！"),
+
     //---系统错误返回码-----
     FAIL(false, 10001, "操作失败"),
     UNAUTHENTICATED(false, 10002, "您还未登录"),
@@ -14,10 +15,15 @@ public enum ResultCode {
     OLDPWDFAIL(false, 20001, "原密码错误"),
     UPLOADFILEERROR(false, 20002, "上传文件错误"),
     USERENABLESTATE(false, 20003, "该用户已被禁用"),
-    USERNOTFIND(false, 20004, "该用户不存在");
+    USERNOTFIND(false, 20004, "该用户不存在"),
 
     //---组织操作返回码----
+    COMMUNITYNAMEREPEAT(false,30000,"组织名称已存在"),
+    COMMUNITYENABLESTATE(false,30001,"所在组织已被禁用"),
+
     //---权限操作返回码----
+    ROLEDELFAIL(false,40000,"尚有用户在使用该角色");
+
     //---其他操作返回码----
 
     //操作是否成功

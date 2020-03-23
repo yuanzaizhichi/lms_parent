@@ -4,14 +4,17 @@ import com.cxf.common.entity.Result;
 import com.cxf.common.entity.ResultCode;
 import com.cxf.community.service.CommunityService;
 import com.cxf.domain.community.Community;
+import io.swagger.annotations.Api;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Api("组织接口")
 @RestController
 @RequestMapping("/community")
 public class CommunityController {
@@ -29,7 +32,11 @@ public class CommunityController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     public Result save(@RequestBody Community community) {
         if (community != null) {
-            communityService.save(community);
+            try {
+                communityService.save(community);
+            } catch (Exception e) {
+                return new Result(ResultCode.COMMUNITYNAMEREPEAT);
+            }
         }
         return new Result(ResultCode.SUCCESS);
     }
@@ -61,7 +68,11 @@ public class CommunityController {
     public Result update(@PathVariable String id, @RequestBody Community community) {
         if (!StringUtils.isEmpty(id) && community != null) {
             community.setId(id);
-            communityService.update(community);
+            try {
+                communityService.update(community);
+            } catch (Exception e) {
+                return new Result(ResultCode.COMMUNITYNAMEREPEAT);
+            }
         }
         return new Result(ResultCode.SUCCESS);
     }
@@ -82,13 +93,29 @@ public class CommunityController {
     }
 
     /**
+     * 分页查询组织列表
+     *
+     * @return
+     */
+    @RequestMapping(value = "/listpage", method = RequestMethod.GET)
+    public Result findAllByPage(@RequestParam int page, @RequestParam int pagesize,@RequestParam Map<String,Object> map) {
+        Map<String, Object> mapResult = communityService.findAllByPage(map, page, pagesize);
+        return new Result(ResultCode.SUCCESS, mapResult);
+    }
+
+    /**
      * 查询组织列表
      *
      * @return
      */
     @RequestMapping(value = "", method = RequestMethod.GET)
     public Result findAll() {
-        List<Map<String,Object>> lstResylt = communityService.findAll();
-        return new Result(ResultCode.SUCCESS, lstResylt);
+        List<Community> lstCommunity = communityService.findAll();
+        return new Result(ResultCode.SUCCESS, lstCommunity);
+    }
+
+    @RequestMapping(value = "/feign/{id}",method = RequestMethod.GET)
+    public Community findComById(@PathVariable(value = "id") String id){
+        return communityService.findComById(id);
     }
 }

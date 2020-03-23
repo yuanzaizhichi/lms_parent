@@ -9,6 +9,7 @@ import com.cxf.domain.system.response.RoleResult;
 import com.cxf.system.service.RoleService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +23,11 @@ public class RoleController extends BaseController {
 
     @Autowired
     private RoleService roleService;
+
+    @RequestMapping(value = "/role/feign/delete", method = RequestMethod.POST)
+    public void delRoleByCommunityId(@RequestParam(value = "communityId") String communityId){
+        roleService.delRoleByCommunityId(communityId);
+    }
 
     /**
      * 分配权限
@@ -82,7 +88,11 @@ public class RoleController extends BaseController {
     @RequiresPermissions(value = "API-ROLE-DELETE")
     @RequestMapping(value = "/role/{id}", method = RequestMethod.DELETE)
     public Result delete(@PathVariable String id) {
-        roleService.deleteById(id);
+        try {
+            roleService.deleteById(id);
+        } catch (DataIntegrityViolationException e) {
+            return new Result(ResultCode.ROLEDELFAIL);
+        }
         return new Result(ResultCode.SUCCESS);
     }
 

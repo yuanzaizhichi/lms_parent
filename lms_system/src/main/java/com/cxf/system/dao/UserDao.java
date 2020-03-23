@@ -20,4 +20,7 @@ public interface UserDao extends JpaRepository<User, String>, JpaSpecificationEx
     @Transactional
     @Query(value = "update User u set u.password ='10d1e8d8358d19bba147afae3d40b309' where u.id=?1")
     void resetPwd(String id);
+
+    @Transactional
+    void deleteByCommunityId(String id);
 }

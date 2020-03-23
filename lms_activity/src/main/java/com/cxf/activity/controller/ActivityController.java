@@ -75,4 +75,9 @@ public class ActivityController extends BaseController {
         activityService.deleteById(id);
         return new Result(ResultCode.SUCCESS);
     }
+
+    @RequestMapping(value = "/feign/delete", method = RequestMethod.POST)
+    public void delByCommunnityId(@RequestParam(value = "communityId") String communityId){
+        activityService.delByCommunnityId(communityId);
+    }
 }

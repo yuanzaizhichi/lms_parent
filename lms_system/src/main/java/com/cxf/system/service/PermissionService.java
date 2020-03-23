@@ -14,6 +14,7 @@ import com.cxf.system.dao.PermissionDao;
 import com.cxf.system.dao.PermissionMenuDao;
 import com.cxf.system.dao.PermissionPointDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -189,7 +190,8 @@ public class PermissionService {
                 return criteriaBuilder.and(list.toArray(new Predicate[list.size()]));
             }
         };
-        return permissionDao.findAll(spec);
+        Sort sort = new Sort(Sort.Direction.ASC,"sort");
+        return permissionDao.findAll(spec,sort);
     }
 
     /**

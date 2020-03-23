@@ -7,10 +7,9 @@ import com.cxf.domain.community.Department;
 import com.cxf.domain.system.Role;
 import com.cxf.domain.system.User;
 import com.cxf.domain.system.response.UserResult;
-import com.cxf.system.client.DepartmentFeignClient;
+import com.cxf.system.client.CommunityFeignClient;
 import com.cxf.system.dao.RoleDao;
 import com.cxf.system.dao.UserDao;
-import com.sun.org.apache.xml.internal.security.utils.Base64;
 import org.apache.shiro.crypto.hash.Md2Hash;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,9 +40,9 @@ public class UserService {
     private RoleDao roleDao;
 
     @Autowired
-    private DepartmentFeignClient departmentFeignClient;
+    private CommunityFeignClient communityFeignClient;
 
-    public void resetPwd(String id){
+    public void resetPwd(String id) {
         userDao.resetPwd(id);
     }
 
@@ -54,7 +53,7 @@ public class UserService {
         user.setCreateTime(new Date());
         user.setPassword(new Md2Hash("123456", "cxf666", 3).toString());
         //设置为组织管理员
-        user.setUsername("组织管理员");
+        user.setUsername(user.getCommunityName() + "管理员");
         user.setLevel("coAdmin");
         user.setEnableState(1);//状态
         return userDao.save(user);
@@ -97,7 +96,7 @@ public class UserService {
             user.setLevel("user");
 
             //填充部门的属性
-            Department department = departmentFeignClient.findByCode(user.getDepartmentId(), communityId);
+            Department department = communityFeignClient.findDptByCode(user.getDepartmentId(), communityId);
             if (department != null) {
                 user.setDepartmentId(department.getId());
                 user.setDepartmentName(department.getName());
@@ -201,9 +200,13 @@ public class UserService {
         userDao.deleteById(id);
     }
 
-    public void deletelist(List<User> idArr){
+    public void deletelist(List<User> idArr) {
         for (User user : idArr) {
             deleteById(user.getId());
         }
+    }
+
+    public void deleteByCommunityId(String communityId) {
+        userDao.deleteByCommunityId(communityId);
     }
 }

@@ -12,6 +12,11 @@
     <artifactId>lms_activity</artifactId>
 
     <dependencies>
+        <!--feign -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
         <!--注册到Eureka -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
