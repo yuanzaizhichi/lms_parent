@@ -12,6 +12,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
@@ -30,6 +31,7 @@ public class RoleService extends BaseService<Role> {
     /**
      * 分配权限
      */
+    @Transactional(rollbackFor = {Exception.class})
     public void assignPerms(String id, List<String> permIdslist) {
         Role role = roleDao.findById(id).get();
         Set<Permission> permissionSet = new HashSet<>();
@@ -46,6 +48,7 @@ public class RoleService extends BaseService<Role> {
     /**
      * 添加角色
      */
+    @Transactional(rollbackFor = {Exception.class})
     public void save(Role role) {
         //填充其他参数
         role.setId(idWorker.nextId() + "");
@@ -55,6 +58,7 @@ public class RoleService extends BaseService<Role> {
     /**
      * 更新角色
      */
+    @Transactional(rollbackFor = {Exception.class})
     public void update(Role role) {
         Role targer = roleDao.getOne(role.getId());
         targer.setDescription(role.getDescription());
@@ -70,6 +74,7 @@ public class RoleService extends BaseService<Role> {
         return roleDao.findAll(getSpec(communityId));
     }
 
+    @Transactional(rollbackFor = {Exception.class})
     public void deleteById(String id) throws DataIntegrityViolationException {
         roleDao.deleteById(id);
     }

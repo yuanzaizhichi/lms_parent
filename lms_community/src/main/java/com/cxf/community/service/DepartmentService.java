@@ -8,6 +8,7 @@ import com.cxf.domain.community.Department;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -20,12 +21,14 @@ public class DepartmentService extends BaseService<Department> {
     @Autowired
     private IdWorker idWorker;
 
+    @Transactional(rollbackFor = {Exception.class})
     public Department save(Department department) {
         department.setId(idWorker.nextId() + "");
         department.setCreateTime(new Date());
         return departmentDao.save(department);
     }
 
+    @Transactional(rollbackFor = {Exception.class})
     public Department update(Department department) {
         Department target = departmentDao.findById(department.getId()).get();
         //排除为null的属性后进行复制
@@ -41,6 +44,7 @@ public class DepartmentService extends BaseService<Department> {
         return departmentDao.findAll(getSpec(communityId));
     }
 
+    @Transactional(rollbackFor = {Exception.class})
     public void deleteById(String id) {
         departmentDao.deleteById(id);
     }
@@ -48,6 +52,7 @@ public class DepartmentService extends BaseService<Department> {
     /**
      * 根据部门编码和组织id查询部门
      */
+    @Transactional(rollbackFor = {Exception.class})
     public Department findByCode(String code, String communityId) {
         return departmentDao.findByCodeAndCommunityId(code,communityId);
     }

@@ -42,10 +42,12 @@ public class UserService {
     @Autowired
     private CommunityFeignClient communityFeignClient;
 
+    @Transactional(rollbackFor = {Exception.class})
     public void resetPwd(String id) {
         userDao.resetPwd(id);
     }
 
+    @Transactional(rollbackFor = {Exception.class})
     public User addComAdmin(User user) {
         String id = idWorker.nextId() + "";
         user.setId(id);
@@ -81,7 +83,7 @@ public class UserService {
     /**
      * 批量保存用户
      */
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class})
     public void saveAll(List<User> list, String communityId, String communityName) {
         for (User user : list) {
             //默认密码
@@ -125,6 +127,7 @@ public class UserService {
     /**
      * 分配角色
      */
+    @Transactional(rollbackFor = {Exception.class})
     public void assignRoles(String id, List<String> roleIds) {
         User user = userDao.findById(id).get();
         Set<Role> roleSet = new HashSet<>();
@@ -136,6 +139,7 @@ public class UserService {
         userDao.save(user);
     }
 
+    @Transactional(rollbackFor = {Exception.class})
     public User save(User user) {
         String id = idWorker.nextId() + "";
         user.setId(id);
@@ -147,6 +151,7 @@ public class UserService {
         return userDao.save(user);
     }
 
+    @Transactional(rollbackFor = {Exception.class})
     public User update(User user) {
         User target = userDao.findById(user.getId()).get();
         //防止覆盖角色列表
@@ -196,16 +201,19 @@ public class UserService {
 //        return pageUser;
     }
 
+    @Transactional(rollbackFor = {Exception.class})
     public void deleteById(String id) {
         userDao.deleteById(id);
     }
 
+    @Transactional(rollbackFor = {Exception.class})
     public void deletelist(List<User> idArr) {
         for (User user : idArr) {
             deleteById(user.getId());
         }
     }
 
+    @Transactional(rollbackFor = {Exception.class})
     public void deleteByCommunityId(String communityId) {
         userDao.deleteByCommunityId(communityId);
     }

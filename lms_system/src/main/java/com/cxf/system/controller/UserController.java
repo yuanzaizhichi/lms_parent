@@ -6,6 +6,7 @@ import com.cxf.common.entity.Result;
 import com.cxf.common.entity.ResultCode;
 import com.cxf.common.poi.ExcelImportUtil;
 import com.cxf.common.utils.BeanMapUtils;
+import com.cxf.common.utils.QiniuUploadUtil;
 import com.cxf.domain.community.Community;
 import com.cxf.domain.system.User;
 import com.cxf.domain.system.response.ProfileResult;
@@ -76,7 +77,10 @@ public class UserController extends BaseController {
         return comUser;
     }
 
-    //批量删除
+    /**
+     * 批量删除
+     */
+    @RequiresPermissions(value = "API-USER-DELLIST")
     @RequestMapping(value = "/user/del", method = RequestMethod.POST)
     public Result deletelist(@RequestBody List<User> idArr) throws Exception {
         userService.deletelist(idArr);
@@ -86,6 +90,7 @@ public class UserController extends BaseController {
     /**
      * 打印员工pdf报表
      */
+    @RequiresPermissions(value = "API-USER-PDF")
     @RequestMapping(value = "/user/{id}/pdf", method = RequestMethod.GET)
     public void pdf(@PathVariable String id) throws Exception {
         //1.引入jasper文件
@@ -96,7 +101,7 @@ public class UserController extends BaseController {
         //用户详情
         UserResult userResult = userService.findById(id);
         //用户头像
-        String staffPhoto = "http://q5w3hueh5.bkt.clouddn.com/" + id;
+        String staffPhoto = new QiniuUploadUtil().getPrix() + id;
         Map param = new HashMap<>();
         param.put("staffPhoto", staffPhoto);
         Map<String, Object> userResultMap = BeanMapUtils.beanToMap(userResult);
@@ -158,6 +163,7 @@ public class UserController extends BaseController {
      * 导入Excel，添加用户
      * 文件上传：springboot
      */
+    @RequiresPermissions(value = "API-USER-IMPORT")
     @RequestMapping(value = "/user/import", method = RequestMethod.POST)
     public Result importUser(@RequestParam(name = "file") MultipartFile file) {
         try {

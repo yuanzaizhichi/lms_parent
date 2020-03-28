@@ -67,6 +67,13 @@ public class ProfileResult implements Serializable, AuthCachePrincipal {
                 }
             }
         }
+        //保证菜单按sort字段升序排列
+        menus.sort(new Comparator<Permission>() {
+            @Override
+            public int compare(Permission o1, Permission o2) {
+                return o1.getSort() - o2.getSort();
+            }
+        });
 
         this.roles.put("menus", menus);
         this.roles.put("points", points);

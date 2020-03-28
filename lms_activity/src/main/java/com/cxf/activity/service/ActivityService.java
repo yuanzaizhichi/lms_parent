@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -51,6 +52,7 @@ public class ActivityService {
      * @param activity
      * @return
      */
+    @Transactional(rollbackFor = {Exception.class})
     public Activity save(Activity activity) {
         activity.setId(idWorker.nextId() + "");
         activity.setApplyTime(new Date());
@@ -64,6 +66,7 @@ public class ActivityService {
      *
      * @param id
      */
+    @Transactional(rollbackFor = {Exception.class})
     public void deleteById(String id) {
         activityDao.deleteById(id);
     }
@@ -74,6 +77,7 @@ public class ActivityService {
      * @param activity
      * @return
      */
+    @Transactional(rollbackFor = {Exception.class})
     public Activity update(Activity activity) {
         Activity target = activityDao.findById(activity.getId()).get();
         //排除为null的属性后进行复制

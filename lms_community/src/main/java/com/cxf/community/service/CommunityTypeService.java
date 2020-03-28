@@ -7,6 +7,7 @@ import com.cxf.domain.community.CommunityType;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -30,6 +31,7 @@ public class CommunityTypeService {
      * @param communityType
      * @return
      */
+    @Transactional(rollbackFor = {Exception.class})
     public CommunityType save(CommunityType communityType) {
         communityType.setId(idWorker.nextId() + "");
         return communityTypeDao.save(communityType);
@@ -40,6 +42,7 @@ public class CommunityTypeService {
      *
      * @param id
      */
+    @Transactional(rollbackFor = {Exception.class})
     public void deleteById(String id) {
         communityTypeDao.deleteById(id);
     }
@@ -50,6 +53,7 @@ public class CommunityTypeService {
      * @param communityType
      * @return
      */
+    @Transactional(rollbackFor = {Exception.class})
     public CommunityType update(CommunityType communityType) {
         CommunityType TargetCommunityType = communityTypeDao.findById(communityType.getId()).get();
         //排除为null的属性后进行复制

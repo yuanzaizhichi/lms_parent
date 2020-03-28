@@ -52,6 +52,7 @@ public class PermissionService {
      *
      * @param map
      */
+    @Transactional(rollbackFor = {Exception.class})
     public void save(Map<String, Object> map) throws Exception {
         //1.通过map构造permission对象
         String id = idWorker.nextId() + "";
@@ -84,6 +85,7 @@ public class PermissionService {
     /**
      * 2.更新权限
      */
+    @Transactional(rollbackFor = {Exception.class})
     public void update(Map<String, Object> map) throws Exception {
         Permission perm = BeanMapUtils.mapToBean(map, Permission.class);
         //1.通过传递的权限id查询权限
@@ -199,6 +201,7 @@ public class PermissionService {
      * //1.删除权限
      * //2.删除权限对应的资源
      */
+    @Transactional(rollbackFor = {Exception.class})
     public void deleteById(String id) throws Exception {
         //1.通过传递的权限id查询权限
         Permission permission = permissionDao.findById(id).get();

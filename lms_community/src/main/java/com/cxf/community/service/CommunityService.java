@@ -21,6 +21,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -62,6 +63,7 @@ public class CommunityService {
      * @param community
      * @return
      */
+    @Transactional(rollbackFor = {Exception.class})
     public Community save(Community community) throws Exception {
         List<Community> lstCommunity = communityDao.findByName(community.getName());
         if (lstCommunity.size() > 0) {
@@ -80,6 +82,7 @@ public class CommunityService {
      *
      * @param id
      */
+    @Transactional(rollbackFor = {Exception.class})
     public void deleteById(String id) {
         communityDao.deleteById(id);
         //删除该组织所有活动
@@ -98,6 +101,7 @@ public class CommunityService {
      * @param community
      * @return
      */
+    @Transactional(rollbackFor = {Exception.class})
     public Community update(Community community) throws Exception {
         List<Community> lstCommunity = communityDao.findByName(community.getName());
         if (lstCommunity.size() > 1) {

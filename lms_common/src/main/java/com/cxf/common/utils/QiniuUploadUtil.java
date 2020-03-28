@@ -9,15 +9,19 @@ import com.qiniu.storage.model.DefaultPutRet;
 import com.qiniu.util.Auth;
 
 /**
- * 用户头像上传工具类（七牛云，30天失效）
+ * 用户头像上传工具类（七牛云，30天失效，注意及时修改过期七牛云域名）
  */
 public class QiniuUploadUtil {
 
     private static final String accessKey = "55vBjJuzc0R6bDafHyjvHTlluW7gxxkttEX7DGFq";
     private static final String secretKey = "NPLkuCZRDCE8j04MZqnW-7wshM2jgoAUkHy-QbPl";
     private static final String bucket = "cxf-lms";
-    private static final String prix = "http://q5w3hueh5.bkt.clouddn.com/";
+    private static final String prix = "http://q7w2afkbr.bkt.clouddn.com/";
     private UploadManager manager;
+
+    public String getPrix(){
+        return this.prix;
+    }
 
     public QiniuUploadUtil() {
         //初始化基本配置
