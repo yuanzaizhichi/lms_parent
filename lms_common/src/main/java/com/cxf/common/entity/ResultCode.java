@@ -20,6 +20,7 @@ public enum ResultCode {
     //---组织操作返回码----
     COMMUNITYNAMEREPEAT(false,30000,"组织名称已存在"),
     COMMUNITYENABLESTATE(false,30001,"所在组织已被禁用"),
+    COMMUNITYTYPEERROR(false,30002,"删除失败！该组织类型仍有组织在使用"),
 
     //---权限操作返回码----
     ROLEDELFAIL(false,40000,"尚有用户在使用该角色");

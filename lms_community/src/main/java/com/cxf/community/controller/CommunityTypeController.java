@@ -39,8 +39,12 @@ public class CommunityTypeController {
      */
     @RequestMapping(value = "/type/{id}", method = RequestMethod.DELETE)
     public Result deleteById(@PathVariable String id) {
-        if (!StringUtils.isEmpty(id)) {
-            communityTypeService.deleteById(id);
+        try {
+            if (!StringUtils.isEmpty(id)) {
+                communityTypeService.deleteById(id);
+            }
+        } catch (Exception e) {
+            return new Result(ResultCode.COMMUNITYTYPEERROR);
         }
         return new Result(ResultCode.SUCCESS);
     }

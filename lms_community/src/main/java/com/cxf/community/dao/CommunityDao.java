@@ -10,4 +10,5 @@ import java.util.Map;
 
 public interface CommunityDao extends JpaRepository<Community, String>, JpaSpecificationExecutor<Community> {
     List<Community> findByName(String name);
+    List<Community> findByType(String typeId);
 }

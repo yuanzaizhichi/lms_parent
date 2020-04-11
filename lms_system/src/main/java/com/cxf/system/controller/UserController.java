@@ -90,7 +90,7 @@ public class UserController extends BaseController {
     /**
      * 打印员工pdf报表
      */
-    @RequiresPermissions(value = "API-USER-PDF")
+//    @RequiresPermissions(value = "API-USER-PDF")
     @RequestMapping(value = "/user/{id}/pdf", method = RequestMethod.GET)
     public void pdf(@PathVariable String id) throws Exception {
         //1.引入jasper文件

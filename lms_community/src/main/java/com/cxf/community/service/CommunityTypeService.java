@@ -1,8 +1,12 @@
 package com.cxf.community.service;
 
+import com.cxf.common.entity.ResultCode;
+import com.cxf.common.exception.CommonException;
 import com.cxf.common.utils.IdWorker;
 import com.cxf.common.utils.PropertyUtils;
+import com.cxf.community.dao.CommunityDao;
 import com.cxf.community.dao.CommunityTypeDao;
+import com.cxf.domain.community.Community;
 import com.cxf.domain.community.CommunityType;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +18,7 @@ import java.util.List;
 
 /**
  * 组织类型service层
+ *
  * @author cxf
  */
 @Service
@@ -21,6 +26,9 @@ public class CommunityTypeService {
 
     @Autowired
     private CommunityTypeDao communityTypeDao;
+
+    @Autowired
+    private CommunityDao communityDao;
 
     @Autowired
     private IdWorker idWorker;
@@ -43,7 +51,12 @@ public class CommunityTypeService {
      * @param id
      */
     @Transactional(rollbackFor = {Exception.class})
-    public void deleteById(String id) {
+    public void deleteById(String id) throws Exception {
+        //判断该组织类型是否还在使用
+        List<Community> lstCommunity = communityDao.findByType(id);
+        if (lstCommunity.size() > 0) {
+            throw new Exception();
+        }
         communityTypeDao.deleteById(id);
     }
 
@@ -57,7 +70,7 @@ public class CommunityTypeService {
     public CommunityType update(CommunityType communityType) {
         CommunityType TargetCommunityType = communityTypeDao.findById(communityType.getId()).get();
         //排除为null的属性后进行复制
-        BeanUtils.copyProperties(communityType,TargetCommunityType, PropertyUtils.getNullPropertyNames(communityType));
+        BeanUtils.copyProperties(communityType, TargetCommunityType, PropertyUtils.getNullPropertyNames(communityType));
         return communityTypeDao.save(TargetCommunityType);
     }
 
