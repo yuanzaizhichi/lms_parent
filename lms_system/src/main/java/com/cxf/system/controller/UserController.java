@@ -6,6 +6,7 @@ import com.cxf.common.entity.Result;
 import com.cxf.common.entity.ResultCode;
 import com.cxf.common.poi.ExcelImportUtil;
 import com.cxf.common.utils.BeanMapUtils;
+import com.cxf.common.utils.CaptchaUtil;
 import com.cxf.common.utils.QiniuUploadUtil;
 import com.cxf.domain.community.Community;
 import com.cxf.domain.system.User;
@@ -20,23 +21,32 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.crypto.hash.Md2Hash;
+import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping(value = "/sys")
@@ -48,13 +58,16 @@ public class UserController extends BaseController {
     @Autowired
     private CommunityFeignClient communityFeignClient;
 
+    @Autowired
+    private RedisTemplate redisTemplate;
+
     /**
      * 删除组织时删除所有用户
      *
      * @param communityId
      */
     @RequestMapping(value = "/user/feign/delete", method = RequestMethod.POST)
-    public void delByCommunityId(@RequestParam(value = "communityId") String communityId){
+    public void delByCommunityId(@RequestParam(value = "communityId") String communityId) {
         userService.deleteByCommunityId(communityId);
     }
 
@@ -211,12 +224,54 @@ public class UserController extends BaseController {
     }
 
     /**
+     * 获取验证码
+     */
+    @RequestMapping(value = "/getCaptcha", method = RequestMethod.GET)
+    public void getCaptcha() {
+        //设置相应类型,告诉浏览器输出的内容为图片
+        response.setContentType("image/jpeg");
+        // 不缓存此内容
+        response.setHeader("Pragma", "No-cache");
+        response.setHeader("Cache-Control", "no-cache");
+        response.setDateHeader("Expire", 0);
+        try {
+            CaptchaUtil tool = new CaptchaUtil();
+            StringBuffer code = new StringBuffer();
+            BufferedImage image = tool.genRandomCodeImage(code);
+
+            redisTemplate.setKeySerializer(new StringRedisSerializer());
+            ValueOperations ops = redisTemplate.opsForValue();
+            String addr = request.getRemoteHost();
+            ops.set(addr, code.toString(), 20, TimeUnit.SECONDS);
+
+            // 将内存中的图片通过流动形式输出到客户端
+            ImageIO.write(image, "JPEG", response.getOutputStream());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * 登陆
      */
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public Result login(@RequestBody Map<String, Object> loginMap) {
         String mobile = (String) loginMap.get("mobile");
         String password = (String) loginMap.get("password");
+        String captcha = (String) loginMap.get("captcha");
+        //校验验证码
+        //redis中的验证码
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        ValueOperations ops = redisTemplate.opsForValue();
+        String addr = request.getRemoteHost();
+        String trueCaptcha = (String) ops.get(addr);
+        if (trueCaptcha == null) {
+            return new Result(ResultCode.CAPYCHAEMPTY);
+        }
+        if (!captcha.equalsIgnoreCase(trueCaptcha)) {
+            return new Result(ResultCode.CAPYCHAERROR);
+        }
         User user = userService.fingByMobild(mobile);
         //用户是否存在
         if (user == null) {
@@ -228,7 +283,7 @@ public class UserController extends BaseController {
         }
         //用户所在组织是否被禁用
         Community community = communityFeignClient.findComById(user.getCommunityId());
-        if (community.getState() != 1){
+        if (community.getState() != 1) {
             return new Result(ResultCode.COMMUNITYENABLESTATE);
         }
         //shiro认证授权流程
@@ -243,7 +298,10 @@ public class UserController extends BaseController {
             //4.获取sessionId
             String sessionId = (String) subject.getSession().getId();
             //5.构造返回
-            return new Result(ResultCode.SUCCESS, sessionId);
+            if ("10d1e8d8358d19bba147afae3d40b309".equals(password)) {
+                return new Result(ResultCode.LOGINNOSAFE, sessionId);
+            }
+            return new Result(ResultCode.LOGINSUCCESS, sessionId);
         } catch (Exception e) {
             return new Result(ResultCode.MOBILEORPASSWORDERROR);
         }

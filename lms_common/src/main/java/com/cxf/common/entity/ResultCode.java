@@ -16,6 +16,10 @@ public enum ResultCode {
     UPLOADFILEERROR(false, 20002, "上传文件错误"),
     USERENABLESTATE(false, 20003, "该用户已被禁用"),
     USERNOTFIND(false, 20004, "该用户不存在"),
+    CAPYCHAERROR(false, 20005, "验证码错误"),
+    CAPYCHAEMPTY(false, 20006, "验证码已过期,请刷新"),
+    LOGINSUCCESS(true, 20007, "登陆成功！"),
+    LOGINNOSAFE(true, 20008, "登陆成功!为账户安全,请尽快修改原始密码"),
 
     //---组织操作返回码----
     COMMUNITYNAMEREPEAT(false,30000,"组织名称已存在"),

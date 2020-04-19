@@ -61,6 +61,7 @@ public class ShiroConfiguration {
         filterMap.put("/autherror", "anon");
         filterMap.put("/sys/download", "anon");
         filterMap.put("/sys/user/*/pdf", "anon");
+        filterMap.put("/sys/getCaptcha", "anon");
 
         //authc -- 认证后访问（登陆认证成功后）
         filterMap.put("/**", "authc");

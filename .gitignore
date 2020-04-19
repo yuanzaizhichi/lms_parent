@@ -3,3 +3,6 @@
 /lms_common_model/target/
 /lms_community/target/
 /lms_system/target/
+*.iml
+.idea/
+target/
